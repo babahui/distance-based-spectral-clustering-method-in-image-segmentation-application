@@ -33,7 +33,7 @@ def evaluate(img_dir, gt_dir, soft_thres=1):
             best_precision, best_recall, best_F = 0, 0, 0
             y_pred = find_boundaries(label_img=segment_img, connectivity=1, mode='thick').astype(np.uint8)
             for i in range(gt_mat.shape[1]):     # in 6 groudtruth situation
-                ture_bound = gt_mat[0, i][0, 0][0]
+                ture_bound = gt_mat[0, i][0, 0][0] # choose which one
                 y_ture = find_boundaries(label_img=ture_bound, connectivity=1, mode='thick').astype(np.uint8)
                 precision, recall, F = measurement(y_ture, y_pred, soft_thres=soft_thres)
            
