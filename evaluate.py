@@ -5,7 +5,6 @@ from scipy.io import loadmat
 from skimage.segmentation import find_boundaries
 import numpy as np
 
-# read
 def evaluate(img_dir, gt_dir, soft_thres=1):
 
     img_list = [join(img_dir, f) for f in os.listdir(img_dir) if isfile(join(img_dir, f))]
@@ -18,9 +17,10 @@ def evaluate(img_dir, gt_dir, soft_thres=1):
 #             print(segment_img.dtype)
             
             # get .mat name and convert to numpy type
-            gt_name = img_path.split('/')[-1].split('.')[0] + '.mat'
+            dir_path, img_name = os.path.split(img_path)
+            gt_name = img_name.split('.')[0] + '.mat'
             gt_path = join(gt_dir, gt_name)
-
+            
             if isfile(gt_path):
                 gt_dict = loadmat(gt_path)
             else:
@@ -28,23 +28,29 @@ def evaluate(img_dir, gt_dir, soft_thres=1):
 
             gt_mat = gt_dict['groundTruth']
             
-            
             # evaluate p, r, F, return rank-1
             best_precision, best_recall, best_F = 0, 0, 0
-            y_pred = find_boundaries(label_img=segment_img, connectivity=1, mode='thick').astype(np.uint8)
+            y_pred = find_boundaries(label_img=segment_img, connectivity=1, mode='thick')
             for i in range(gt_mat.shape[1]):     # in 6 groudtruth situation
                 ture_bound = gt_mat[0, i][0, 0][0] # choose which one
-                y_ture = find_boundaries(label_img=ture_bound, connectivity=1, mode='thick').astype(np.uint8)
+                y_ture = find_boundaries(label_img=ture_bound, connectivity=1, mode='thick')
                 precision, recall, F = measurement(y_ture, y_pred, soft_thres=soft_thres)
-           
-                if best_precision < precision:
+                   
+                
+#                 if best_precision < precision:
+#                     best_precision = precision
+#                 if best_recall < recall:
+#                     best_recall = recall
+#                 if best_precision + best_recall > 0:
+#                     best_F = (2 * best_precision * best_recall) / (best_precision + best_recall)    
+#                 else:
+#                     best_F = 0
+                    
+                if best_F < F:
+                    best_F = F
                     best_precision = precision
-                if best_recall < recall:
                     best_recall = recall
-                if best_precision + best_recall > 0:
-                    best_F = (2 * best_precision * best_recall) / (best_precision + best_recall)    
-                else:
-                    best_F = 0
+
                     
             precision_array.append(best_precision)
             recall_array.append(best_recall)
@@ -58,7 +64,6 @@ def measurement(y_ture, y_pred, soft_thres):
     # make sure soft threshold not too enough to destory our method
     if soft_thres > 100:
         print('maybe too large soft_thres param setting')
-    import numpy as np
     y_ture = np.asarray(y_ture)
     y_pred = np.asarray(y_pred)
     
@@ -86,7 +91,6 @@ def measurement(y_ture, y_pred, soft_thres):
                 fn += 1
                 
 #     print('tp, tn, fp, fn', tp, tn, fp, fn)
-    
     recall = tp / (tp + fp)
     precision = tp / (tp + tn)
     if precision == 0 and recall == 0:

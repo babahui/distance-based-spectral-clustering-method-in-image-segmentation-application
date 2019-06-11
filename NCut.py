@@ -1,7 +1,8 @@
-
+from skimage import data, segmentation, color
+from skimage.future import graph
+    
 def ncut(img=None, thresh=0.001, num_cuts=10, sp_met='slic'):
-    from skimage import data, segmentation, color
-    from skimage.future import graph
+ 
     
 #     labels1 = segmentation.felzenszwalb(m_img, scale=50, sigma=0.5, min_size=100)
     if sp_met == 'slic':
