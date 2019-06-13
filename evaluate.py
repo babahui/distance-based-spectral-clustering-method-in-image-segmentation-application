@@ -91,10 +91,21 @@ def measurement(y_ture, y_pred, soft_thres):
                 fn += 1
                 
 #     print('tp, tn, fp, fn', tp, tn, fp, fn)
-    recall = tp / (tp + fp)
-    precision = tp / (tp + tn)
+    if tp + fp == 0:
+        recall = 0
+    else:
+        recall = tp / (tp + fp)
+        
+        
+    if tp + tn == 0:
+        precision = 0
+    else:
+        precision = tp / (tp + tn)
+        
+        
     if precision == 0 and recall == 0:
         F = 0
     else:
         F = 2 * (precision * recall) / (precision + recall)
+        
     return precision, recall, F

@@ -8,7 +8,7 @@ def ncut(img=None, thresh=0.001, num_cuts=10, sp_met='slic'):
     if sp_met == 'slic':
         labels1 = segmentation.slic(img, compactness=30, n_segments=400)
     if sp_met == 'fl':
-        labels1 = felzenszwalb(img, scale=100, sigma=0.5, min_size=50)
+        labels1 = segmentation.felzenszwalb(img, scale=100, sigma=0.5, min_size=50)
     if sp_met == 'qs':
         labels1 = quickshift(img, kernel_size=3, max_dist=6, ratio=0.5)
     
